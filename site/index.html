@@ -218,6 +218,10 @@ tr.selrow td{background:var(--brand-2)!important}
 .selall{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px}.selall input{width:20px;height:20px;accent-color:var(--brand)}
 @media (max-width:860px){.selbar.on{top:calc(58px + env(safe-area-inset-top,0px))}}
 .bnav{display:none}
+.ct-card{margin-top:14px;padding:14px 18px}.ct-card.urg{border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}.ct-card .fbar{margin-bottom:6px}
+.ct-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}.ct-h h2{margin:0}
+.ct-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.ct-h+.ct-row{border-top:0}.ct-main{min-width:0}.ct-side{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .wm-o{position:relative;display:inline-block}
 .roof-o{position:absolute;left:50%;transform:translateX(-50%);top:-.05em;width:.86em;height:.47em;overflow:visible}
 .roof-o path{fill:none;stroke:var(--gold);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
@@ -654,7 +658,7 @@ function fillFromContrato(form,uIdv){
 
 const ACT={
   menu(){sideOpen=true;$('.side').classList.add('open');const s=document.createElement('div');s.className='scrim';s.dataset.act='scrim';document.body.appendChild(s)},
-  scrim:closeSide,fechar(){closeModal()},lote:(id,el)=>lote(id,el.dataset.op),dashUnid:id=>{const u=get('unidades',id);F.dash={...(F.dash||{}),predio:u.predioId,unidade:id};render();window.scrollTo(0,0);toast('Mostrando '+u.nome+'.')},dashLimpar:()=>{F.dash={};render()},dashGr:id=>{F.dash={...(F.dash||{}),gr:id};render()},dashPredio:id=>{F.dash={predio:id,unidade:''};render();window.scrollTo(0,0);toast('Mostrando '+nomePredio(id)+'.')},filtrar:()=>filtrar(),limparFiltros:(id)=>{FSNAP=null;closeModal(true);if(id){F.dash={...(F.dash||{})};id.split(',').forEach(k=>delete F.dash[k]);render();toast('Filtro limpo.');return}const k=FKEY[route().name];if(k){const keep={};['gr','gsel','rsel','tsel'].forEach(x=>{if(F[k]&&F[k][x]!=null)keep[x]=F[k][x]});F[k]=k==='dash'?keep:{}}P=P0();render();toast('Filtros limpos.')},abrirFiltros:id=>abrirFiltros(id),exportar:()=>{const o={};COLS.forEach(c=>o[c]=S[c]);const b=new Blob([JSON.stringify(o,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='imobone-dados-'+hoje()+'.json';document.body.appendChild(a);a.click();a.remove();toast('Arquivo baixado.')},verGerados:(id,el)=>{closeModal(true);F.receitas={predio:el.dataset.predio,unidade:id,tipo:'Aluguel'};P={...P,preset:'tudo'};location.hash='#/receitas';render()},voltar:()=>voltar(),abrir:(id,el)=>abrirLanc(el.dataset.col,id),
+  scrim:closeSide,fechar(){closeModal()},lote:(id,el)=>lote(id,el.dataset.op),dashUnid:id=>{const u=get('unidades',id);F.dash={...(F.dash||{}),predio:u.predioId,unidade:id};render();window.scrollTo(0,0);toast('Mostrando '+u.nome+'.')},dashLimpar:()=>{F.dash={};render()},dashGr:id=>{F.dash={...(F.dash||{}),gr:id};render()},dashPredio:id=>{F.dash={predio:id,unidade:''};render();window.scrollTo(0,0);toast('Mostrando '+nomePredio(id)+'.')},filtrar:()=>filtrar(),limparFiltros:(id)=>{FSNAP=null;closeModal(true);if(id){F.dash={...(F.dash||{})};id.split(',').forEach(k=>delete F.dash[k]);render();toast('Filtro limpo.');return}const k=FKEY[route().name];if(k){const keep={};['gr','gsel','rsel','tsel','cdias','csel'].forEach(x=>{if(F[k]&&F[k][x]!=null)keep[x]=F[k][x]});F[k]=k==='dash'?keep:{}}P=P0();render();toast('Filtros limpos.')},abrirFiltros:id=>abrirFiltros(id),exportar:()=>{const o={};COLS.forEach(c=>o[c]=S[c]);const b=new Blob([JSON.stringify(o,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='imobone-dados-'+hoje()+'.json';document.body.appendChild(a);a.click();a.remove();toast('Arquivo baixado.')},verGerados:(id,el)=>{closeModal(true);F.receitas={predio:el.dataset.predio,unidade:id,tipo:'Aluguel'};P={...P,preset:'tudo'};location.hash='#/receitas';render()},voltar:()=>voltar(),abrir:(id,el)=>abrirLanc(el.dataset.col,id),
   sair(){ME=null;Prefs.set({sess:null,exp:null});location.hash='';$('#root').innerHTML='';render()},
   esqueci(){openModal({title:'Esqueci minha senha',submit:null,body:`<p style="margin-top:0">Peça ao administrador do sistema para redefinir sua senha em <b>Configurações → Usuários</b>. Ele definirá uma senha provisória que você poderá trocar depois em “Alterar senha”.</p>`})},
   minhaSenha(){openModal({title:'Alterar senha',body:`<div class="grid">${fld('Senha atual','<input type="password" name="atual" required autocomplete="current-password">')}${fld('Nova senha (mínimo 6)','<input type="password" name="nova" minlength="6" required autocomplete="new-password">')}</div>`,
@@ -714,6 +718,20 @@ function resumoUnidade(fp,fu,per){
    </div>
    ${ru?`<a class="btn sm" href="#/unidade/${ru}">Abrir ${esc(nomeUnid(ru))}</a>`:rp?`<a class="btn sm" href="#/predio/${rp}">Abrir ${esc(nomePredio(rp))}</a>`:''}</div>`;
 }
+function diasAte(d){const a=new Date(hoje()+'T12:00'),b=new Date(d+'T12:00');return Math.round((b-a)/864e5)}
+function contratosAlerta(){
+  const todos=S.contratos.filter(c=>c.ativo&&c.fim);if(!todos.length)return'';
+  const cd=fget('dash','cdias','30');const cv=fget('dash','csel','');const{p:cp,u:cu}=parseLocal(cv);const cvv=cu?'u:'+cu:cp?'p:'+cp:'';
+  const OPT=[['30','Próximos 30 dias'],['60','Próximos 60 dias'],['90','Próximos 90 dias'],['180','Próximos 6 meses'],['365','Próximos 12 meses'],['todos','Todos os contratos ativos']];
+  const cs=todos.filter(c=>(cd==='todos'||diasAte(c.fim)<=+cd)&&(!cu||c.unidadeId===cu)&&(!cp||c.predioId===cp)).sort((a,b)=>cmp(a.fim,b.fim));
+  const rows=cs.map(c=>{const d=diasAte(c.fim);const txt=d<0?`Venceu há ${-d} dia(s)`:d===0?'Vence hoje':`Vence em ${d} dia(s)`;const cls=d<0?'vencido':d<=30?'parcial':'ativo';
+    return`<div class="ct-row"><div class="ct-main"><b>${esc(nomePredio(c.predioId))} · ${esc(nomeUnid(c.unidadeId))}</b><div class="hint">${esc(c.nome)} · até ${fd(c.fim)}</div></div>
+    <div class="ct-side">${badge(cls,txt)}<div class="acts">${isAdmin()?`<button class="btn sm" data-act="contratoForm" data-id="${c.id}">Renovar</button>`:''}<a class="btn sm ghost" href="#/unidade/${c.unidadeId}">Abrir</a></div></div></div>`}).join('');
+  const urg=todos.some(c=>diasAte(c.fim)<=30);
+  return`<div class="card ct-card ${urg?'urg':''}"><div class="ct-h"><h2>Contratos a vencer</h2></div>
+   <div class="filters" data-keys="cdias,csel">${fld('Vencendo em',`<select data-ch="dash.cdias" data-chip="1">${OPT.map(([v,l])=>`<option value="${v}" ${cd===v?'selected':''}>${l}</option>`).join('')}</select>`)}${fld('Prédio ou unidade',`<select data-ch="dash.csel" data-chip="1">${optLocal(cvv,'Todos os prédios')}</select>`)}</div>
+   ${rows||`<div class="empty" style="padding:14px">Nenhum contrato vence nesse prazo.${cd!=='todos'?' Toque em Filtros para ver prazos maiores.':''}</div>`}</div>`;
+}
 function pgDashboard(){
   const per=periodo();const fp=fget('dash','predio'),fu=fget('dash','unidade');
   const sc=fu?{unidadeId:fu}:fp?{predioId:fp}:{};const m=scope(sc);
@@ -766,6 +784,7 @@ function pgDashboard(){
     <div class="stat ${dab.length?'warn':''}"><div class="l">A pagar</div><div class="v num">${brl(sum(dab,d=>d.valor))}</div><div class="h">${dab.length} despesa(s) em ${esc(perCurto())}</div></div>
     <div class="stat sep"><div class="l">Cauções ativas</div><div class="v num">${brl(totalCaucoes(sc))}</div><div class="h">Guardadas à parte do saldo</div></div>
   </div>
+  ${contratosAlerta()}
   <div class="qacts"><button class="btn pri" data-act="gerar">Gerar aluguéis</button><button class="btn" data-act="novaReceita">Nova receita</button><button class="btn" data-act="novaDespesa">Nova despesa</button></div>
   <div class="card chart-card sec"><h2>Receitas x despesas por mês · ${esc(gu?nomeUnid(gu):gp?nomePredio(gp):'Todos os prédios')}</h2>
    <div class="filters" data-keys="gr,gsel">${fld('Meses no gráfico',`<select data-ch="dash.gr" data-chip="1">${[['1','Mês atual'],['3','Últimos 3 meses'],['6','Últimos 6 meses'],['12','Últimos 12 meses']].map(([v,l])=>`<option value="${v}" ${gr===v?'selected':''}>${l}</option>`).join('')}</select>`)}${fld('Prédio ou unidade',`<select data-ch="dash.gsel" data-chip="1">${optLocal(gv,'Todos os prédios')}</select>`)}</div>
