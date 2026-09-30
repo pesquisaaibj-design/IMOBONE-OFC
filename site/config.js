@@ -2,6 +2,6 @@
 // Cole aqui os dados do seu projeto Supabase (Project Settings → API).
 // Se deixar vazio, o sistema funciona só neste aparelho (dados no navegador).
 window.IMOB_CFG = {
-  supabaseUrl: "",   // ex.: "https://abcdefgh.supabase.co"
-  supabaseKey: ""    // a "Publishable key" (sb_publishable_...) ou a antiga "anon public"
+  supabaseUrl: "https://dnucumeakxmfoekicjfw.supabase.co"
+  supabaseKey: "sb_publishable_X-xTWDNNSUDlv-4CuQfl7g_AE4KGJ0m"   
 };
